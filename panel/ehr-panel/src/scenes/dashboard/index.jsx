@@ -1,10 +1,12 @@
 // src/scenes/dashboard/index.jsx
 import React, { useState } from 'react';
-import { Box, Grid, Paper, Typography, Avatar, Button, TextField, List, ListItem, ListItemText, Tabs, Tab } from '@mui/material';
-import Header from '../../components/Header';
+import { Box, Grid, Paper, Typography, Button, TextField, List, ListItem, ListItemText, Tabs, Tab } from '@mui/material';
 import CustomLineChart from '../../components/CustomLineChart';
 import CustomBarChart from '../../components/CustomBarChart';
 import CustomPieChart from '../../components/CustomPieChart';
+import PatientInformation from './PatientInformation';
+import Topbar from '../global/Topbar';
+import Topbar2 from '../global/Topbar2';
 
 const mockData = {
   healthTrends: [
@@ -28,11 +30,6 @@ const mockData = {
     { name: 'Group C', value: 300 },
     { name: 'Group D', value: 200 },
   ],
-  patientRecord: {
-    diagnosisDate: '02/05/2024',
-    cancerType: 'Prostate Cancer, Stage III',
-    treatmentHistory: 'Radical prostatectomy followed by androgen deprivation therapy (ADT)',
-  },
   chatHistory: [
     { message: 'You\'re welcome! Let me know if you need further assistance.', sender: 'AI' },
     { message: 'Actually, I\'ve also been feeling really anxious lately. Could my lack of sleep be contributing to this?', sender: 'Patient' },
@@ -44,211 +41,19 @@ const mockData = {
 
 const Dashboard = () => {
   const [selectedChart, setSelectedChart] = useState('line');
-  const [isEditingProfile, setIsEditingProfile] = useState(false);
-  const [isEditingRecord, setIsEditingRecord] = useState(false);
-  const [profileData, setProfileData] = useState({
-    name: 'Ibrahim Hassan',
-    gender: 'Male',
-    age: '27',
-    job: 'Architecture',
-    bloodType: 'O-',
-    allergies: 'None reported',
-  });
-  const [recordData, setRecordData] = useState(mockData.patientRecord);
 
   const handleChartChange = (event, newValue) => {
     setSelectedChart(newValue);
   };
 
-  const handleProfileChange = (e) => {
-    const { name, value } = e.target;
-    setProfileData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleRecordChange = (e) => {
-    const { name, value } = e.target;
-    setRecordData((prev) => ({ ...prev, [name]: value }));
-  };
-
   return (
-    <Box sx={{ padding: 3 }}>
-      <Box display="flex" justifyContent="center" alignItems="center" sx={{ marginBottom: 3 }}>
-        <Header title="Welcome to Your Dashboard" subtitle="Overview of your health and activities. Interact with AI to diagnose your condition and receive personalized treatment recommendations." />
-      </Box>
-      <Grid container spacing={3}>
+    <Box sx={{ paddingTop: 0, paddingLeft: 3, paddingRight: 3 }}>
+      <Topbar />
+      <Topbar2 />
+      <Grid container spacing={3} sx={{ marginTop: 0 }}>
         {/* First Column */}
         <Grid item xs={12} md={3}>
-          <Paper elevation={3} sx={{ padding: 2 }}>
-            <Box display="flex" justifyContent="space-between" alignItems="center">
-              <Typography variant="h6" color="textSecondary">Patient Profile</Typography>
-              <Button variant="contained" size="small" onClick={() => setIsEditingProfile(!isEditingProfile)}>
-                {isEditingProfile ? 'Cancel' : 'Edit'}
-              </Button>
-            </Box>
-            <Avatar alt="Ibrahim Hassan" src="/assets/user.png" sx={{ width: 100, height: 100, marginTop: 2 }} />
-            <TextField
-              label="Name"
-              value={profileData.name}
-              onChange={handleProfileChange}
-              name="name"
-              variant="outlined"
-              fullWidth
-              sx={{ marginTop: 2 }}
-              InputProps={{
-                readOnly: !isEditingProfile,
-                style: { fontWeight: 'bold' },
-              }}
-              InputLabelProps={{
-                style: { color: 'grey' },
-              }}
-            />
-            <TextField
-              label="Gender"
-              value={profileData.gender}
-              onChange={handleProfileChange}
-              name="gender"
-              variant="outlined"
-              fullWidth
-              sx={{ marginTop: 2 }}
-              InputProps={{
-                readOnly: !isEditingProfile,
-                style: { fontWeight: 'bold' },
-              }}
-              InputLabelProps={{
-                style: { color: 'grey' },
-              }}
-            />
-            <TextField
-              label="Age"
-              value={profileData.age}
-              onChange={handleProfileChange}
-              name="age"
-              variant="outlined"
-              fullWidth
-              sx={{ marginTop: 2 }}
-              InputProps={{
-                readOnly: !isEditingProfile,
-                style: { fontWeight: 'bold' },
-              }}
-              InputLabelProps={{
-                style: { color: 'grey' },
-              }}
-            />
-            <TextField
-              label="Job"
-              value={profileData.job}
-              onChange={handleProfileChange}
-              name="job"
-              variant="outlined"
-              fullWidth
-              sx={{ marginTop: 2 }}
-              InputProps={{
-                readOnly: !isEditingProfile,
-                style: { fontWeight: 'bold' },
-              }}
-              InputLabelProps={{
-                style: { color: 'grey' },
-              }}
-            />
-            <TextField
-              label="Blood Type"
-              value={profileData.bloodType}
-              onChange={handleProfileChange}
-              name="bloodType"
-              variant="outlined"
-              fullWidth
-              sx={{ marginTop: 2 }}
-              InputProps={{
-                readOnly: !isEditingProfile,
-                style: { fontWeight: 'bold' },
-              }}
-              InputLabelProps={{
-                style: { color: 'grey' },
-              }}
-            />
-            <TextField
-              label="Allergies"
-              value={profileData.allergies}
-              onChange={handleProfileChange}
-              name="allergies"
-              variant="outlined"
-              fullWidth
-              sx={{ marginTop: 2 }}
-              InputProps={{
-                readOnly: !isEditingProfile,
-                style: { fontWeight: 'bold' },
-              }}
-              InputLabelProps={{
-                style: { color: 'grey' },
-              }}
-            />
-            {isEditingProfile && (
-              <Button variant="contained" color="primary" sx={{ marginTop: 2 }} onClick={() => setIsEditingProfile(false)}>
-                Save
-              </Button>
-            )}
-          </Paper>
-          <Paper elevation={3} sx={{ padding: 2, marginTop: 2 }}>
-            <Box display="flex" justifyContent="space-between" alignItems="center">
-              <Typography variant="h6" color="textSecondary">Patient Record</Typography>
-              <Button variant="contained" size="small" onClick={() => setIsEditingRecord(!isEditingRecord)}>
-                {isEditingRecord ? 'Cancel' : 'Edit'}
-              </Button>
-            </Box>
-            <TextField
-              label="Diagnosis Date"
-              value={recordData.diagnosisDate}
-              onChange={handleRecordChange}
-              name="diagnosisDate"
-              variant="outlined"
-              fullWidth
-              sx={{ marginTop: 2 }}
-              InputProps={{
-                readOnly: !isEditingRecord,
-                style: { fontWeight: 'bold' },
-              }}
-              InputLabelProps={{
-                style: { color: 'grey' },
-              }}
-            />
-            <TextField
-              label="Cancer Type"
-              value={recordData.cancerType}
-              onChange={handleRecordChange}
-              name="cancerType"
-              variant="outlined"
-              fullWidth
-              sx={{ marginTop: 2 }}
-              InputProps={{
-                readOnly: !isEditingRecord,
-                style: { fontWeight: 'bold' },
-              }}
-              InputLabelProps={{
-                style: { color: 'grey' },
-              }}
-            />
-            <TextField
-              label="Treatment History"
-              value={recordData.treatmentHistory}
-              onChange={handleRecordChange}
-              name="treatmentHistory"
-              variant="outlined"
-              fullWidth
-              sx={{ marginTop: 2 }}
-              InputProps={{
-                readOnly: !isEditingRecord,
-                style: { fontWeight: 'bold' },
-              }}
-              InputLabelProps={{
-                style: { color: 'grey' },
-              }}
-            />
-            {isEditingRecord && (
-              <Button variant="contained" color="primary" sx={{ marginTop: 2 }} onClick={() => setIsEditingRecord(false)}>
-                Save
-              </Button>
-            )}
-          </Paper>
+          <PatientInformation />
         </Grid>
 
         {/* Second Column */}

@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Box, Typography, Paper, Button, Grid, Avatar, Dialog, DialogTitle, DialogContent, DialogActions, TextField } from '@mui/material';
 import Header from '../../components/Header';
 import Chat from './chats';
+import Topbar2 from '../global/Topbar2';
 
 const mockSpecialists = [
   {
@@ -94,7 +95,8 @@ const Specialists = ({ searchQuery }) => {
   };
 
   return (
-    <Box sx={{ padding: 3 }}>
+    <Box sx={{ padding: 8 }}>
+      <Topbar2 />
       <Header title="Specialists" subtitle="Find and book appointments with specialists" />
       <Grid container spacing={3}>
         {filteredSpecialists.map((specialist) => (

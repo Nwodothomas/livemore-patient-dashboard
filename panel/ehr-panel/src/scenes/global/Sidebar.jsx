@@ -121,8 +121,8 @@ const Sidebar = () => {
                 Pages
               </Typography>
               <Item
-                title="Patient Profile"
-                to="/patientprofile"
+                title="Patient Information"
+                to="/patientinformation"
                 icon={<PersonOutlined />}
                 selected={selected}
                 setSelected={setSelected}

@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Box, Typography, Paper, TextField, Button, Grid } from '@mui/material';
 import Header from '../../components/Header';
+import Topbar2 from '../global/Topbar2';
 
 // Mock function to simulate AI responses
 const getAIResponse = (message) => {
@@ -35,7 +36,8 @@ const ChatAI = () => {
   };
 
   return (
-    <Box sx={{ padding: 3 }}>
+    <Box sx={{ paddingTop: 8, paddingLeft: 3, paddingRight: 3 }}>
+      <Topbar2 />
       <Header title="Chat AI" subtitle="Interact with our AI for health-related queries" />
       <Paper elevation={3} sx={{ padding: 2, marginTop: 2, height: '60vh', overflowY: 'scroll' }}>
         {messages.map((message, index) => (

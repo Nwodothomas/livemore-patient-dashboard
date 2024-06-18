@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Typography, Paper, Button, Grid, List, ListItem, ListItemText, ListItemAvatar, Avatar, Dialog, DialogTitle, DialogContent, DialogActions, TextField } from '@mui/material';
 import Header from '../../components/Header';
+import Topbar2 from '../global/Topbar2';
 
 const mockHospitals = [
   {
@@ -11,25 +12,59 @@ const mockHospitals = [
     phone: '555-1234',
     email: 'info@generalhospital.com',
     website: 'http://www.generalhospital.com',
+    ehr: 'Epic Systems',
     services: ['Oncology', 'Cardiology', 'Neurology', 'Orthopedics'],
     specialists: [
       { id: 1, name: 'Dr. Emmanuel Chizy', specialization: 'Cardiology', availability: 'Mon-Fri 9am-5pm', email: 'john.doe@generalhospital.com', phone: '555-5678', profilePicture: '/assets/specialist1.png' },
       { id: 2, name: 'Dr. Neol Zara', specialization: 'Neurology', availability: 'Tue-Thu 10am-4pm', email: 'jane.smith@generalhospital.com', phone: '555-8765', profilePicture: '/assets/specialist2.png' }
+    ],
+    patients: [
+      {
+        id: 1,
+        name: 'John Doe',
+        medicalHistory: ['Hypertension', 'Diabetes'],
+        medications: ['Amlodipine', 'Metformin'],
+        notes: 'Regular follow-ups required for blood sugar levels.'
+      },
+      {
+        id: 2,
+        name: 'Jane Smith',
+        medicalHistory: ['Asthma'],
+        medications: ['Albuterol'],
+        notes: 'Monitor respiratory function and adjust medication as needed.'
+      }
     ]
   },
   {
-    id: 1,
-    name: 'General Hospital',
-    address: '123 Main St, Victorial, Lagos, 12345, NG',
-    phone: '555-1234',
-    email: 'info@generalhospital.com',
-    website: 'http://www.generalhospital.com',
+    id: 2,
+    name: 'City Hospital',
+    address: '456 Elm St, Victoria Island, Lagos, 12346, NG',
+    phone: '555-4321',
+    email: 'info@cityhospital.com',
+    website: 'http://www.cityhospital.com',
+    ehr: 'Cerner',
     services: ['Oncology', 'Cardiology', 'Neurology', 'Orthopedics'],
     specialists: [
-      { id: 1, name: 'Dr. Emmanuel Chizy', specialization: 'Cardiology', availability: 'Mon-Fri 9am-5pm', email: 'john.doe@generalhospital.com', phone: '555-5678', profilePicture: '/assets/specialist1.png' },
-      { id: 2, name: 'Dr. Neol Zara', specialization: 'Neurology', availability: 'Tue-Thu 10am-4pm', email: 'jane.smith@generalhospital.com', phone: '555-8765', profilePicture: '/assets/specialist2.png' }
+      { id: 3, name: 'Dr. Sarah Connor', specialization: 'Oncology', availability: 'Mon-Wed 10am-4pm', email: 'sarah.connor@cityhospital.com', phone: '555-8765', profilePicture: '/assets/specialist3.png' },
+      { id: 4, name: 'Dr. Mike Ross', specialization: 'Orthopedics', availability: 'Fri 8am-2pm', email: 'mike.ross@cityhospital.com', phone: '555-5678', profilePicture: '/assets/specialist4.png' }
+    ],
+    patients: [
+      {
+        id: 3,
+        name: 'Alice Johnson',
+        medicalHistory: ['Breast Cancer'],
+        medications: ['Tamoxifen'],
+        notes: 'Continue with current medication and regular screening.'
+      },
+      {
+        id: 4,
+        name: 'Robert Brown',
+        medicalHistory: ['Knee Injury'],
+        medications: ['Ibuprofen'],
+        notes: 'Physical therapy sessions required twice a week.'
+      }
     ]
-  },
+  }
   // Add more hospitals as needed
 ];
 
@@ -45,7 +80,6 @@ const Hospitals = ({ searchQuery }) => {
     reason: '',
     specialistId: ''
   });
-  const [uploadedFile, setUploadedFile] = useState(null);
   const [limit, setLimit] = useState(6);
 
   useEffect(() => {
@@ -56,7 +90,7 @@ const Hospitals = ({ searchQuery }) => {
 
   useEffect(() => {
     const filtered = hospitals.filter(hospital =>
-      hospital.services.some(service =>
+      hospital.services && hospital.services.some(service =>
         service.toLowerCase().includes(searchQuery?.toLowerCase() || '')
       )
     );
@@ -88,21 +122,9 @@ const Hospitals = ({ searchQuery }) => {
     handleCloseDialog();
   };
 
-  const handleFileUpload = (e) => {
-    setUploadedFile(e.target.files[0]);
-  };
-
-  const handleUploadSubmit = (e) => {
-    e.preventDefault();
-    // Handle file upload logic here
-    if (uploadedFile) {
-      // Add logic to process the uploaded file
-      // For example, send it to the server or perform analysis
-    }
-  };
-
   return (
-    <Box sx={{ padding: 3 }}>
+    <Box sx={{ padding: 8 }}>
+      <Topbar2 />
       <Header title="Hospitals" subtitle="Find and book appointments with hospitals and specialists" />
       <Grid container spacing={3}>
         {filteredHospitals.map((hospital) => (
@@ -114,8 +136,9 @@ const Hospitals = ({ searchQuery }) => {
               <Typography variant="body2"><strong>Email:</strong> {hospital.email}</Typography>
               <Typography variant="body2"><strong>Website:</strong> <a href={hospital.website} target="_blank" rel="noopener noreferrer">{hospital.website}</a></Typography>
               <Typography variant="body2"><strong>Services:</strong> {hospital.services.join(', ')}</Typography>
+              <Typography variant="body2"><strong>EHR:</strong> {hospital.ehr}</Typography>
               <Button variant="contained" color="primary" sx={{ marginTop: 2 }} onClick={() => handleOpenDialog(hospital)}>
-                View Specialists & Book Appointment
+                View Details
               </Button>
             </Paper>
           </Grid>
@@ -143,8 +166,8 @@ const Hospitals = ({ searchQuery }) => {
                       primary={specialist.name}
                       secondary={`${specialist.specialization} - ${specialist.availability}`}
                     />
-                    <Button variant="outlined" onClick={() => setAppointmentForm({ ...appointmentForm, specialistId: specialist.id })}>
-                      Select
+                    <Button variant="outlined" sx={{ ml: 2 }} onClick={() => setAppointmentForm({ ...appointmentForm, specialistId: specialist.id })}>
+                      Select & Chat
                     </Button>
                   </ListItem>
                 ))}
@@ -200,20 +223,6 @@ const Hospitals = ({ searchQuery }) => {
                 </Grid>
                 <Button type="submit" variant="contained" color="primary" sx={{ marginTop: 2 }}>
                   Book Appointment
-                </Button>
-              </form>
-
-              <Typography variant="h6" sx={{ marginTop: 3 }}>Upload Test Results</Typography>
-              <form onSubmit={handleUploadSubmit}>
-                <TextField
-                  fullWidth
-                  variant="outlined"
-                  type="file"
-                  onChange={handleFileUpload}
-                  sx={{ marginTop: 1 }}
-                />
-                <Button type="submit" variant="contained" color="secondary" sx={{ marginTop: 2 }}>
-                  Upload & Get Recommendations
                 </Button>
               </form>
             </>

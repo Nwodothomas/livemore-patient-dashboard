@@ -1,7 +1,8 @@
 // src/scenes/testresults/TestResults.jsx
 import React, { useState, useEffect, useRef } from 'react';
-import { Box, Typography, Paper, Grid, Button, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+import { Box, Typography, Paper, Grid, Button, Select, MenuItem, FormControl, InputLabel, TextField, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 import Header from '../../components/Header';
+import Topbar2 from '../global/Topbar2';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 
@@ -29,6 +30,18 @@ const fetchTestResults = () => {
   });
 };
 
+// Mock function to simulate fetching lab centers from an API
+const fetchLabCenters = () => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve([
+        { id: 1, name: 'Central Lab', address: '123 Lab St', phone: '555-1234' },
+        { id: 2, name: 'East Side Lab', address: '456 Lab Ave', phone: '555-5678' }
+      ]);
+    }, 1000);
+  });
+};
+
 // Mock function to simulate analyzing test images
 const analyzeTestImage = (file) => {
   return new Promise((resolve) => {
@@ -46,14 +59,25 @@ const analyzeTestImage = (file) => {
 
 const TestResults = () => {
   const [testResults, setTestResults] = useState([]);
+  const [labCenters, setLabCenters] = useState([]);
   const [selectedTestType, setSelectedTestType] = useState('');
   const [uploadedFile, setUploadedFile] = useState(null);
   const [analysisResult, setAnalysisResult] = useState(null);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [appointmentForm, setAppointmentForm] = useState({
+    patientName: '',
+    date: '',
+    time: '',
+    labCenterId: ''
+  });
   const analysisResultRef = useRef(null);
 
   useEffect(() => {
     fetchTestResults().then((data) => {
       setTestResults(data);
+    });
+    fetchLabCenters().then((data) => {
+      setLabCenters(data);
     });
   }, []);
 
@@ -92,8 +116,28 @@ const TestResults = () => {
     });
   };
 
+  const handleOpenDialog = () => {
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+  };
+
+  const handleAppointmentChange = (e) => {
+    const { name, value } = e.target;
+    setAppointmentForm({ ...appointmentForm, [name]: value });
+  };
+
+  const handleAppointmentSubmit = (e) => {
+    e.preventDefault();
+    // Handle appointment booking logic here
+    handleCloseDialog();
+  };
+
   return (
-    <Box sx={{ padding: 3 }}>
+    <Box sx={{ padding: 6 }}>
+      <Topbar2 />
       <Header title="Test Results" subtitle="View and analyze your test results" />
       <Box sx={{ marginBottom: 3 }}>
         <FormControl fullWidth>
@@ -126,6 +170,23 @@ const TestResults = () => {
         ))}
       </Grid>
       <Box sx={{ marginTop: 3 }}>
+        <Typography variant="h6">Lab Centers</Typography>
+        <Grid container spacing={3}>
+          {labCenters.map((lab) => (
+            <Grid item xs={12} md={6} key={lab.id}>
+              <Paper elevation={3} sx={{ padding: 2 }}>
+                <Typography variant="h6">{lab.name}</Typography>
+                <Typography variant="body2"><strong>Address:</strong> {lab.address}</Typography>
+                <Typography variant="body2"><strong>Phone:</strong> {lab.phone}</Typography>
+                <Button variant="contained" sx={{ marginTop: 2 }} onClick={handleOpenDialog}>
+                  Book Appointment
+                </Button>
+              </Paper>
+            </Grid>
+          ))}
+        </Grid>
+      </Box>
+      <Box sx={{ marginTop: 3 }}>
         <Typography variant="h6">Upload Test Image</Typography>
         <input type="file" accept="image/*" onChange={handleFileUpload} />
         <Button variant="contained" color="primary" onClick={handleAnalyze} sx={{ marginTop: 2 }}>
@@ -153,6 +214,75 @@ const TestResults = () => {
           </Paper>
         </Box>
       )}
+
+      <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="md" fullWidth>
+        <DialogTitle>Book Appointment</DialogTitle>
+        <DialogContent>
+          <form onSubmit={handleAppointmentSubmit}>
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  variant="outlined"
+                  label="Patient Name"
+                  name="patientName"
+                  value={appointmentForm.patientName}
+                  onChange={handleAppointmentChange}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  variant="outlined"
+                  label="Date"
+                  type="date"
+                  name="date"
+                  InputLabelProps={{ shrink: true }}
+                  value={appointmentForm.date}
+                  onChange={handleAppointmentChange}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  variant="outlined"
+                  label="Time"
+                  type="time"
+                  name="time"
+                  InputLabelProps={{ shrink: true }}
+                  value={appointmentForm.time}
+                  onChange={handleAppointmentChange}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <FormControl fullWidth>
+                  <InputLabel id="lab-center-select-label">Lab Center</InputLabel>
+                  <Select
+                    labelId="lab-center-select-label"
+                    id="lab-center-select"
+                    name="labCenterId"
+                    value={appointmentForm.labCenterId}
+                    label="Lab Center"
+                    onChange={handleAppointmentChange}
+                  >
+                    {labCenters.map((lab) => (
+                      <MenuItem key={lab.id} value={lab.id}>
+                        {lab.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+            </Grid>
+            <Button type="submit" variant="contained" color="primary" sx={{ marginTop: 2 }}>
+              Book Appointment
+            </Button>
+          </form>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog}>Close</Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };
